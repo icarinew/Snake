@@ -1,10 +1,10 @@
 Requisitos - Snake
 
-01. Movimentar a cobra
-02. Mudar direção da cobra (reagindo ao comando do usuário)
-03. Mostrar maçã(em um lugar aleatório do mapa/uma por vez)
-04. Sumir maçã(depois que for comida)
-05. Crescer a cobra(quando ela comer a maçã)
-06. Mostrar pontuação na tela
-07. Mostrar game over(quando colidir no canto da tela ou no próprio corpo)
-08. Aumentar velocidade gradaticamente de acorodo com a pontuação
+01. Movimentar a cobra;
+02. Mudar direção da cobra (reagindo ao comando do usuário);
+03. Mostrar maçã(em um lugar aleatório do mapa/uma por vez);
+04. Sumir maçã(depois que for comida);
+05. Crescer a cobra(quando ela comer a maçã);
+06. Mostrar pontuação na tela;
+07. Mostrar game over(quando colidir no canto da tela ou no próprio corpo);
+08. Aumentar velocidade gradativamente de acordo com a pontuação.
