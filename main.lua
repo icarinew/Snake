@@ -1,14 +1,16 @@
 --local composer = require("composer")
 --local bd = require("bd")
+local jogador = require ('model.jogador')
+local banco = require ('dao.banco')
 cena = {}
 cobra = {cabeca = {}, corpo = {}}
-pontuacao = 0
+
 velocidade = 1000
 
 function verfVelocidade()
-	if pontuacao <= 2 then
+	if jogador.pontuacao <= 2 then
 		velocidade = 1000
-	elseif pontuacao >= 3 and pontuacao < 6 then
+	elseif jogador.pontuacao >= 3 and jogador.pontuacao < 6 then
 		velocidade = 500 
 	else 	
 		velocidade = 250
@@ -127,9 +129,9 @@ function sumirMaca()
 		maca = display.newRect(cena[x][y].x, cena[x][y].y, 15, 15)
 		maca:setFillColor(1,0,0)
 		display.remove(pontTela)
-		somarPontuacao()
+		jogador:addPontuacao()
 		verfVelocidade()
-		mostrarPontuacao(pontuacao)
+		mostrarPontuacao()
 		crescer()
 		--aparecerMaca() 
 	end	 
@@ -175,10 +177,14 @@ function gameOver()
 	print("Game over")
 	x = display.actualContentWidth
 	y = display.actualContentHeight
+	banco:atualizarPontuacao(jogador:getPontuacao())
 	text = display.newText("GAME OVER", x/2, y/2, native.systemFontBold,35)
+	local pontuacaoFinal = display.newText(banco:getPontuacao(), x/2, y/3, native.systemFontBold,35)
 	text:setFillColor(1,0,0)
-	--bd:Insere(pontuacao)
+	pontuacaoFinal:setFillColor(1,0,0)
+	--bd:Insere(jogador.pontuacao)
 	text:toFront()
+	jogador:resetJogador()
 	--composer.gotoScene("telaInicial")
 end	
 ----------------------------------------------------
@@ -219,12 +225,12 @@ function movimentacaoAutomatica(direcao)
 	end	
 end	
 -------------------------------------------------------
-function mostrarPontuacao(pontuacao)
-pontTela = display.newText(pontuacao, 100, -25)
+function mostrarPontuacao()
+	pontTela = display.newText(jogador:getPontuacao(), 100, -25)
 end
-function somarPontuacao()
-pontuacao = pontuacao + 1
-end	
+-- function somarjogador.Pontuacao()
+-- jogador.pontuacao = jogador.pontuacao + 1
+-- end	
 
 -------------------------------------------------------
 function iniciarJogo()
@@ -239,4 +245,4 @@ function movimentacaoInicial()
 end
 
 iniciarJogo()
-mostrarPontuacao(pontuacao)
+mostrarPontuacao()
