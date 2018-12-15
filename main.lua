@@ -143,18 +143,7 @@ function crescer(event)
 	retan:setFillColor(0,0,0)
 	table.insert(cobra.corpo, retan)
 end	
-----------------------------------------------------
---------------- Linhas limite-----------------------
---[[function linhasLimite()
-	linhaCima = display.newLine(0,20,display.actualContentWidth, 20)
-	--fisica.addBody(linhaCima, static)
-	linhaEsquerda= display.newLine(0,20,0, 316)
-	--fisica.addBody(linhaEsquerda, static)
-	linhaBaixo = display.newLine(0, 316, display.actualContentWidth, 316)
-	--fisica.addBody(linhaBaixo, static)
-	linhaDireita = direita.newLine(display.actualContentWidth, 20, display.actualContentWidth, 316)
-	--fisica.addBody(linhaDireita, static)
-end	--]]
+
 ----------------------------------------------------
 ------------------Teste limite ----------------------
 function testeLimite()
