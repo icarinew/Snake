@@ -1,9 +1,8 @@
 local cobra = require ('model.cobra')
 local jogador = {pontuacao = 0, cobra = cobra}
 
-function jogador:addPontuacao()
+function jogador:somarPontuacao()
 	self.pontuacao = self.pontuacao + 1
-	cobra:addTamanho()
 end
 
 function jogador:getPontuacao()
@@ -13,5 +12,6 @@ end
 function jogador:resetJogador()
 	self.pontuacao = 0;
 end
+
 
 return jogador
