@@ -4,7 +4,8 @@ local banco = require ('dao.banco')
 
 
 function irMenu()
-composer.gotoScene( "telainicial", "fade", 500 )
+composer.removeScene("view.ranking", false)
+composer.gotoScene( "view.telainicial", "fade", 500 )
 end	
 
 function scene:create( event )

@@ -2,11 +2,11 @@ local composer = require( "composer" )
 local scene = composer.newScene()
 
 local function irJogo()
-	composer.gotoScene( "jogo", "fade", 500 )
+	composer.gotoScene( "view.jogo", "fade", 500 )
 end
 
 local function irRanking()
-	composer.gotoScene( "ranking", "fade", 500 )
+	composer.gotoScene( "view.ranking", "fade", 500 )
 end	
 
 function scene:create(event)

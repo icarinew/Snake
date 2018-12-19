@@ -1,19 +1,18 @@
 local composer = require("composer")
 local scene = composer.newScene()
-local jogador = require ('model.jogador')
 local banco = require ('dao.banco')
-
 
 function scene:create( event )
     local sceneGroup = self.view
+	parou = false
 	velocidade = 1000
+    jogador = require ('model.jogador')
  	cobra = {cabeca = {1}, corpo = {}}
  	cobra = require("model.cobra")
-	cenario = {}
-	cenario = require("model.cenario")
-	maca = {}
+	cenario = {cena = {}, botoes = {}}
+	cenario = require("view.cenario")
     maca = require("model.maca")
-
+    --------- Verifica pontuação e aumenta velocidade----------
 	function verfVelocidade()
 		if jogador.pontuacao <= 2 then
 			velocidade = 1000
@@ -24,24 +23,27 @@ function scene:create( event )
 		end
 	end	
 	----------Movimentação da cabeça-----------
-	function virarEsquerda(event)
-		xAnterior = cobra.cabeca[1].x
-		yAnterior = cobra.cabeca[1].y
-		cobra.cabeca[1].x = cobra.cabeca[1].x + 15.8
-		testeLimite()
-		timer.pause(movIn)
-		movIn = timer.performWithDelay(velocidade, virarEsquerda, 0)
-		cobra:moverCobra(xAnterior, yAnterior)
-	    maca:sumirMaca(cobra, jogador)
-	end
-
 	function virarDireita(event)
 		xAnterior = cobra.cabeca[1].x
 		yAnterior = cobra.cabeca[1].y
-		cobra.cabeca[1].x = cobra.cabeca[1].x - 15.8
-		testeLimite()
+		cobra.cabeca[1].x = cobra.cabeca[1].x + 15.8
+		----verifica se deu gameOver-----
+		testeLimite(parou)
+		----pausa o movimento anterior e inicia um novo com a nova direção----
 		timer.pause(movIn)
 		movIn = timer.performWithDelay(velocidade, virarDireita, 0)
+		cobra:moverCobra(xAnterior, yAnterior)
+		----verifica se a cabeça está na mesma posição que a maça e remove se sim----
+	    maca:sumirMaca(cobra, jogador)
+	end
+
+	function virarEsquerda(event)
+		xAnterior = cobra.cabeca[1].x
+		yAnterior = cobra.cabeca[1].y
+		cobra.cabeca[1].x = cobra.cabeca[1].x - 15.8
+		testeLimite(parou)
+		timer.pause(movIn)
+		movIn = timer.performWithDelay(velocidade, virarEsquerda, 0)
 		cobra:moverCobra(xAnterior, yAnterior)
 		maca:sumirMaca(cobra, jogador)
 	end
@@ -50,7 +52,7 @@ function scene:create( event )
 		xAnterior = cobra.cabeca[1].x
 		yAnterior = cobra.cabeca[1].y
 		cobra.cabeca[1].y = cobra.cabeca[1].y - 15.8
-		testeLimite()
+		testeLimite(parou)
 		timer.pause(movIn)
 		movIn = timer.performWithDelay(velocidade, virarCima, 0)
 		cobra:moverCobra(xAnterior, yAnterior)
@@ -61,53 +63,42 @@ function scene:create( event )
 		xAnterior = cobra.cabeca[1].x
 		yAnterior = cobra.cabeca[1].y
 		cobra.cabeca[1].y = cobra.cabeca[1].y + 15.8
-		testeLimite()
+		testeLimite(parou)
 		timer.pause(movIn)
 		movIn = timer.performWithDelay(velocidade, virarBaixo, 0)
 		cobra:moverCobra(xAnterior, yAnterior)
 		maca:sumirMaca(cobra, jogador)
 	end
 	----------------------------------------------------
-	function fim()
-		composer.gotoScene("ranking")
-		composer.removeScene("jogo")
-		
-	end	
 	------------------Teste limite ----------------------
-	function testeLimite()
-		
-		if cobra.cabeca[1].x > cena[1][20].x + 7.5 or cobra.cabeca[1].x < cena[1][1].x - 7.5  then
-			gameOver()
-			fim()
-		elseif cobra.cabeca[1].y > cena[25][1].y + 7.5 or cobra.cabeca[1].y < cena[1][1].y - 7.5 then
-			gameOver() 
-			fim()
-
-		end		
-		for i = 1, #cobra.corpo do
-			if math.floor(cobra.cabeca[1].x) == math.floor(cobra.corpo[i].x) and 
-				math.floor(cobra.cabeca[1].y) == math.floor(cobra.corpo[i].y) then
-					gameOver()
-					fim()
-			end
+	function testeLimite(parou)
+		if parou == true then
+			
+		else	
+			if cobra.cabeca[1].x > cenario.cena[1][20].x + 7.5 or cobra.cabeca[1].x < cenario.cena[1][1].x - 7.5  then
+				gameOver()
+			elseif cobra.cabeca[1].y > cenario.cena[25][1].y + 7.5 or cobra.cabeca[1].y < cenario.cena[1][1].y - 7.5 then
+				gameOver() 
+			end		
 		end	
-
 	end	
 	----------------------------------------------------
 	---------------------Game over ---------------------
 	function gameOver()
+		parou = true
 		print("Game over")
 		x = display.actualContentWidth
 		y = display.actualContentHeight
 		banco:atualizarPontuacao(jogador:getPontuacao())
 		jogador:resetJogador()
-		composer.removeScene("jogo")
-		composer.gotoScene("ranking")
+		cenario:resetCenario()
+		composer.removeScene("view.jogo", false)
+		composer.gotoScene("view.ranking")
 	end	
 
 	-------------------------------------------------------
 	function mostrarPontuacao()
-		pontTela = display.newText(jogador:getPontuacao(), 100, -25)
+		pontTela = display.newText(jogador:getPontuacao(), 10, 445)
 	end
 	-------------------------------------------------------
 	function iniciarJogo()
@@ -119,21 +110,25 @@ function scene:create( event )
     -------------------------------------------------------
 	function movimentacaoInicial()
 		cobra.cabeca[1].x = cobra.cabeca[1].x + 15.8
-	end
+	end	
 
 	-------------------------------------------------------
 	iniciarJogo()
 	mostrarPontuacao()
-	--[[sceneGroup:insert(cobra.cabeca[1])
-	sceneGroup:insert(maca[1])
 	for i = 1, #cobra.corpo do
-		sceneGroup:insert(cenario[i])
+		sceneGroup:insert(cobra.corpo[i])
 	end
-	for i = 1, #cenario do
-		for j = 1, #cenario[i] do
-		sceneGroup:insert(cenario[i][j])
+	for i = 1, #cenario.cena do
+		for j = 1, #cenario.cena[i] do
+		sceneGroup:insert(cenario.cena[i][j])
 		end
-	end--]]
+	end
+	for i = 1, #cenario.botoes do
+		sceneGroup:insert(cenario.botoes[i])
+	end	
+	sceneGroup:insert(pontTela)
+	sceneGroup:insert(maca[1])
+	sceneGroup:insert(cobra.cabeca[1])
 end					 
 function scene:destroy( event )
 	local sceneGroup = self.view
